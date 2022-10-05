@@ -1,88 +1,39 @@
-version: '3.1'
+version: '3.8'
+
 services:
-    db:
-        image: mongo
-        restart: always
-        networks:
-            - db_network # for api reqs
-        environment:
-            MONGO_INITDB_ROOT_USERNAME: $DB_USERNAME
-            MONGO_INITDB_ROOT_PASSWORD: $DB_PASSWORD
-            MONGO_INITDB_DATABASE: $MONGO_INITDB_DATABASE
-        volumes:
-            - db_vol:/data/db
 
-    db_interface:
-        image: mongo-express
-        restart: always
-        environment:
-            ME_CONFIG_MONGODB_ADMINUSERNAME: $DB_USERNAME
-            ME_CONFIG_MONGODB_ADMINPASSWORD: $DB_PASSWORD
-            ME_CONFIG_SITE_BASEURL: /db_interface/
-            ME_CONFIG_MONGODB_SERVER: db
-        networks:
-            - db_network # for db
-            - web_network # for interface
-        depends_on:
-            - db
+  backend:
+    build: ./services/backend
+    ports:
+      - 5000:5000
+    environment:
+      - DATABASE_URL=postgres://hello_fastapi:hello_fastapi@db:5432/hello_fastapi_dev
+      - SECRET_KEY=09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
+    volumes:
+      - ./services/backend:/app
+    # command: bash -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    command: uvicorn src.main:app --reload --host 0.0.0.0 --port 5000
+    depends_on:
+      - db
 
-    backend:
-        build: ./backend
-        command: --log-level debug
-        restart: always
-        volumes:
-            - ./backend:/app
-        environment:
-            PORT: 5000
-            DEBUG: $DEBUG
-            SECRET_KEY: $SECRET_KEY
-            DATABASE_URL: $DATABASE_URL
-        depends_on:
-            - db
-        networks:
-            - db_network
-            - web_network
+  frontend:
+    build: ./services/frontend
+    volumes:
+      - './services/frontend:/app'
+      - '/app/node_modules'
+    ports:
+      - 8080:8080
 
-    frontend:
-        build:
-            context: ./frontend
-            args:
-                DEBUG: $DEBUG
-                NODE_ENV: $NODE_ENV
-        entrypoint: ./entrypoint.sh
-        restart: unless-stopped
-        volumes:
-            - ./frontend:/home/node/app
-            - /home/node/app/node_modules
-        environment:
-            NODE_ENV: $NODE_ENV
-            PORT: 8080
-            DEBUG: $DEBUG
-        depends_on:
-            - backend
-        networks:
-            - web_network
-
-    nginx:
-        image: nginx:latest
-        ports:
-            - 8000:80
-        volumes:
-            - web-root:/var/www/html
-            - ./config/nginx:/etc/nginx/conf.d/
-        depends_on:
-            - frontend
-            - backend
-            - db_interface
-        networks:
-            - web_network
-
-networks:
-    web_network:
-        driver: bridge
-    db_network:
-        driver: bridge
+  db:
+    image: postgres:13
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=hello_fastapi
+      - POSTGRES_PASSWORD=hello_fastapi
+      - POSTGRES_DB=hello_fastapi_dev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
 
 volumes:
-    web-root:
-    db_vol:
+  postgres_data:
