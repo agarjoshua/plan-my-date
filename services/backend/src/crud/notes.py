@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from tortoise.exceptions import DoesNotExist
 
-from src.database.models import Notes
+from services.backend.src.database.wrongmodels import Notes
 from src.schemas.notes import NoteOutSchema
 from src.schemas.token import Status
 

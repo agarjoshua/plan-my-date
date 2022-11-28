@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from tortoise.exceptions import DoesNotExist
 
-from src.database.models import Restaurant
+from services.backend.src.database.wrongmodels import Restaurant
 from src.schemas.restaurants import RestaurantOutSchema
 from src.schemas.token import Status
 

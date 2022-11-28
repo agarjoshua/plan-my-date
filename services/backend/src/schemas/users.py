@@ -1,6 +1,6 @@
 from tortoise.contrib.pydantic import pydantic_model_creator
 
-from src.database.models import Users
+from services.backend.src.database.wrongmodels import Users
 
 
 UserInSchema = pydantic_model_creator(

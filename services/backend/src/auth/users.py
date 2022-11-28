@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from tortoise.exceptions import DoesNotExist
 
-from src.database.models import Users
+from services.backend.src.database.wrongmodels import Users
 from src.schemas.users import UserDatabaseSchema
 
 

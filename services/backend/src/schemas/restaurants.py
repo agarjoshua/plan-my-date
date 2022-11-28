@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 from tortoise.contrib.pydantic import pydantic_model_creator
 
-from src.database.models import Restaurant
+from services.backend.src.database.wrongmodels import Restaurant
 
 
 RestaurantInSchema = pydantic_model_creator(

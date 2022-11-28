@@ -1,5 +1,6 @@
 from tortoise import fields, models
 
+from database import Base
 
 class Users(models.Model):
     id = fields.IntField(pk=True)
@@ -21,14 +22,15 @@ class Notes(models.Model):
     def __str__(self):
         return f"{self.title}, {self.author_id} on {self.created_at}"
 
+
 class Restaurant(models.Model):
 
     status_choices = (
-        ("default","cheap"),
-        ("500-1000","affordable"),
-        ("1000-5000","Medium"),
-        ("5000-*","pricey")
-    )
+            ("default", "cheap"),
+            ("500-1000", "affordable"),
+            ("1000-5000", "Medium"),
+            ("5000-*", "pricey"),
+        )
 
     id = fields.IntField(pk=True)
     location = fields.CharField(max_length=225)
@@ -36,4 +38,16 @@ class Restaurant(models.Model):
     ratings = fields.IntField()
     review = fields.CharField(max_length=1000)
     prices = fields.CharField(Default="default", choices=status_choices, max_length=100)
-    # images = fields.ImageField()
+    images = fields.ForeignKeyField("models.Images", related_name="Image")
+
+
+class Image(models.Model):
+    id = fields.IntField(pk=True)
+    link = fields.CharField(max_length=225)
+
+
+class Review(models.Model):
+    id = fields.IntField(pk=True)
+    restaurant = fields.ForeignKeyField("models.Restaurant", related_name="review")
+    reviewer = fields.ForeignKeyField("models.Users", related_name="review")
+    review = fields.CharField(max_length=225)

@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 from tortoise.contrib.pydantic import pydantic_model_creator
 
-from src.database.models import Notes
+from services.backend.src.database.wrongmodels import Notes
 
 
 NoteInSchema = pydantic_model_creator(

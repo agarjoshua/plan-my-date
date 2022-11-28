@@ -29,6 +29,21 @@
         </div>
       </div>
 
+      <div v-if="restaurants">
+        <div v-for="restaurant in restaurants" :key="restaurant.id" class="restaurants">
+          <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <ul>
+                <li><strong>Note Title:</strong> {{ restaurant.name }}</li>
+                <li><strong>Author:</strong> {{ restaurant.location }}</li>
+                <li><router-link :to="{name: 'Restaurant', params:{id: restaurant.id}}">View</router-link></li>
+              </ul>
+            </div>
+          </div>
+          <br/>
+        </div>
+      </div>
+
       <div v-else>
         <p>Nothing to see. Check back later.</p>
       </div>
@@ -44,12 +59,15 @@ export default {
     isLoggedIn: function() {
       return this.$store.getters.isAuthenticated;
     },
-    ...mapGetters({ notes: 'stateNotes'}),
+    ...mapGetters(
+      { notes: 'stateNotes', 
+        restaurants: 'stateRestaurants'
+      }),
   },
   methods: {
-    ...mapActions(['createNote']),
+    ...mapActions(['createNote'], ['createRestaurants']),
     async submit() {
-      await this.createNote(this.form);
+      await this.createNote(this.form), this.createRestaurant(this.form);
     },
   },
 }

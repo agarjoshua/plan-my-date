@@ -11,7 +11,7 @@ from tortoise.exceptions import DoesNotExist
 
 from src.schemas.token import TokenData
 from src.schemas.users import UserOutSchema
-from src.database.models import Users
+from services.backend.src.database.wrongmodels import Users
 
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
